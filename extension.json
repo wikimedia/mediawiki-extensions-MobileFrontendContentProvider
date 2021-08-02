@@ -1,0 +1,63 @@
+{
+	"name": "MobileFrontendContentProvider",
+	"version": "1.0.0",
+	"author": [
+		"Jon Robson"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:MobileFrontend/ContentProvider",
+	"descriptionmsg": "mobile-frontend-content-provider-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.37.0"
+	},
+	"ConfigRegistry": {
+		"MobileFrontendContentProvider": "GlobalVarConfig::newInstance"
+	},
+	"MessagesDirs": {
+		"MobileFrontendContentProvider": [
+			"i18n"
+		]
+	},
+	"AutoloadNamespaces": {
+		"MobileFrontendContentProviders\\": "includes/"
+	},
+	"ResourceModules": {
+		"mobile.contentProviderApi": {
+			"targets": [ "mobile", "desktop" ],
+			"scripts": "resources/mobile.contentProviderApi.js"
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "MobileFrontendContentProvider"
+	},
+	"Hooks": {
+		"MobileFrontendContentProvider": "MobileFrontendContentProviders\\Hooks::onMobileFrontendContentProvider",
+		"OutputPageBeforeHTML": "MobileFrontendContentProviders\\Hooks::onOutputPageBeforeHTML"
+	},
+	"config": {
+		"MFContentProviderTryLocalContentFirst": {
+			"value": true
+		},
+		"MFContentProviderClass": {
+			"value": "MobileFrontendContentProviders\\MwApiContentProvider"
+		},
+		"MFMwApiContentProviderBaseUri": {
+			"value": "https://en.wikipedia.org/w/api.php"
+		},
+		"MFContentProviderScriptPath": {
+			"value": ""
+		},
+		"MFMcsContentProviderBaseUri": {
+			"value": "https://en.wikipedia.org/api/rest_v1"
+		},
+		"MFAlwaysUseContentProvider": {
+			"value": false
+		}
+	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
+	"manifest_version": 2
+}
