@@ -8,7 +8,7 @@ use RuntimeException;
 
 class ContentProviderFactory {
 	private const MW_API = MwApiContentProvider::class;
-	private const MCS_API = McsContentProvider::class;
+	private const PARSOID_API = ParsoidContentProvider::class;
 	private const PHP_PARSER = DefaultContentProvider::class;
 
 	/**
@@ -82,9 +82,9 @@ class ContentProviderFactory {
 		$this->addForeignScriptPath( $out );
 
 		switch ( $contentProviderClass ) {
-			case self::MCS_API:
-				$baseUrl = $this->config->get( 'MFMcsContentProviderBaseUri' );
-				return new McsContentProvider( $baseUrl, $out );
+			case self::PARSOID_API:
+				$baseUrl = $this->config->get( 'MFParsoidContentProviderBaseUri' );
+				return new ParsoidContentProvider( $baseUrl, $out );
 			case self::MW_API:
 				$skinName = $out->getSkin()->getSkinName();
 				$rev = $out->getRequest()->getIntOrNull( 'oldid' );

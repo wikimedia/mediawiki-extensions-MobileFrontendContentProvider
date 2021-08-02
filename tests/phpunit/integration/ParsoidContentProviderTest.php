@@ -1,22 +1,22 @@
 <?php
 
 use MediaWiki\Http\HttpRequestFactory;
-use MobileFrontendContentProviders\McsContentProvider;
+use MobileFrontendContentProviders\ParsoidContentProvider;
 
 /**
  * @group MobileFrontend
- * @coversDefaultClass \MobileFrontendContentProviders\McsContentProvider
+ * @coversDefaultClass \MobileFrontendContentProviders\ParsoidContentProvider
  * @covers ::__construct
  */
-class McsContentProviderTest extends MediaWikiTestCase {
+class ParsoidContentProviderTest extends MediaWikiTestCase {
 	private const BASE_URL = '/w/api.php';
 
 	/**
 	 * @param string $baseUrl
 	 * @param Title|null $title
-	 * @return McsContentProvider
+	 * @return ParsoidContentProvider
 	 */
-	private function makeMcsContentProvider( $baseUrl, Title $title = null ) {
+	private function makeParsoidContentProvider( $baseUrl, Title $title = null ) {
 		$out = new OutputPage( new RequestContext() );
 		if ( $title ) {
 			$out->setTitle( $title );
@@ -24,7 +24,7 @@ class McsContentProviderTest extends MediaWikiTestCase {
 			// make sure RequestContext doesn't pick up a title from the global
 			$this->setMwGlobals( 'wgTitle', null );
 		}
-		return new McsContentProvider( $baseUrl, $out );
+		return new ParsoidContentProvider( $baseUrl, $out );
 	}
 
 	private function createTestTitle() {
@@ -84,8 +84,8 @@ class McsContentProviderTest extends MediaWikiTestCase {
 		$title = $this->createTestTitle();
 
 		$this->setService( 'HttpRequestFactory', $this->mockBadHTTPFactory() );
-		$mcsContentProvider = $this->makeMcsContentProvider( self::BASE_URL, $title );
-		$actual = $mcsContentProvider->getHTML();
+		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
+		$actual = $ParsoidContentProvider->getHTML();
 
 		$this->assertSame( '', $actual );
 	}
@@ -94,9 +94,9 @@ class McsContentProviderTest extends MediaWikiTestCase {
 	 * @covers ::getHTML
 	 */
 	public function testGetHtmlWithNoTitle() {
-		$mcsContentProvider = $this->makeMcsContentProvider( self::BASE_URL, null );
+		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, null );
 
-		$actual = $mcsContentProvider->getHTML();
+		$actual = $ParsoidContentProvider->getHTML();
 		$this->assertSame( '', $actual );
 	}
 
@@ -112,14 +112,14 @@ class McsContentProviderTest extends MediaWikiTestCase {
 		$factoryMock = $this->createMock( HttpRequestFactory::class );
 		$factoryMock->expects( $this->once() )
 			->method( 'create' )
-			->with( self::BASE_URL . '/page/mobile-sections/Test_Title' )
+			->with( self::BASE_URL . '/page/html/Test_Title' )
 			->willReturn( $httpFalseRequestMock );
 
 		$title = $this->createTestTitle();
 
 		$this->setService( 'HttpRequestFactory', $factoryMock );
-		$mcsContentProvider = $this->makeMcsContentProvider( self::BASE_URL, $title );
-		$actual = $mcsContentProvider->getHTML();
+		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
+		$actual = $ParsoidContentProvider->getHTML();
 
 		$this->assertSame( '', $actual );
 	}
@@ -131,29 +131,26 @@ class McsContentProviderTest extends MediaWikiTestCase {
 	public function testGetHtmlWithResponseDecodedNotArray() {
 		$title = $this->createTestTitle();
 
-		$url = self::BASE_URL . '/page/mobile-sections/Test_Title';
+		$url = self::BASE_URL . '/page/html/Test_Title';
 		$this->setService( 'HttpRequestFactory', $this->mockHTTPFactory( $url, 'text' ) );
-		$mcsContentProvider = $this->makeMcsContentProvider( self::BASE_URL, $title );
-		$actual = $mcsContentProvider->getHTML();
+		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
+		$actual = $ParsoidContentProvider->getHTML();
 
-		$this->assertSame( '', $actual );
+		$this->assertSame( 'text', $actual );
 	}
 
 	/**
-	 * Test all paths in buildHtmlFromResponse()
-	 * @covers ::buildHtmlFromResponse
 	 * @covers ::getHTML
 	 * @covers ::fileGetContents
 	 */
 	public function testGetHtmlWithValidResponse() {
-		$sampleResponse = '{"lead": {"sections": [{"text": "value"}]}, "remaining": {"sections": ' .
-			'[{"line": "l", "toclevel": 1, "text": "t"}]}}';
+		$sampleResponse = 'value<h2>l</h2>t';
 		$title = $this->createTestTitle();
 
-		$url = self::BASE_URL . '/page/mobile-sections/Test_Title';
+		$url = self::BASE_URL . '/page/html/Test_Title';
 		$this->setService( 'HttpRequestFactory', $this->mockHTTPFactory( $url, $sampleResponse ) );
-		$mcsContentProvider = $this->makeMcsContentProvider( self::BASE_URL, $title );
-		$actual = $mcsContentProvider->getHTML();
+		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
+		$actual = $ParsoidContentProvider->getHTML();
 
 		$expected = "value<h2>l</h2>t";
 		$this->assertSame( $expected, $actual );

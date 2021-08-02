@@ -2,7 +2,7 @@
 
 use MobileFrontendContentProviders\ContentProviderFactory;
 use MobileFrontendContentProviders\DefaultContentProvider;
-use MobileFrontendContentProviders\McsContentProvider;
+use MobileFrontendContentProviders\ParsoidContentProvider;
 use MobileFrontendContentProviders\MwApiContentProvider;
 
 /**
@@ -107,7 +107,7 @@ class ContentProviderFactoryTest extends MediaWikiTestCase {
 			'MFContentProviderClass' => $contentProvider,
 			'MFContentProviderTryLocalContentFirst' => $localContent,
 			'MFContentProviderScriptPath' => false,
-			'MFMcsContentProviderBaseUri' => 'http://localhost/',
+			'MFParsoidContentProviderBaseUri' => 'http://localhost/',
 			'MFMwApiContentProviderBaseUri' => 'http://localhost/'
 		] );
 		$factory = new ContentProviderFactory( $config );
@@ -126,9 +126,9 @@ class ContentProviderFactoryTest extends MediaWikiTestCase {
 	 */
 	public function contentProvidersDataProvider() {
 		return [
-			[ McsContentProvider::class, true, null ],
+			[ ParsoidContentProvider::class, true, null ],
 			[ MwApiContentProvider::class, true, null ],
-			[ McsContentProvider::class, false, McsContentProvider::class ],
+			[ ParsoidContentProvider::class, false, ParsoidContentProvider::class ],
 			[ MwApiContentProvider::class, false, MwApiContentProvider::class ]
 		];
 	}

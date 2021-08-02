@@ -11,7 +11,7 @@ use Title;
  * Sources content from the Mobile-Content-Service
  * This requires allow_url_fopen to be set.
  */
-class McsContentProvider implements IContentProvider {
+class ParsoidContentProvider implements IContentProvider {
 	/** @var Title|null */
 	private $title;
 	/** @var OutputPage */
@@ -27,29 +27,6 @@ class McsContentProvider implements IContentProvider {
 		$this->baseUrl = $baseUrl;
 		$this->out = $out;
 		$this->title = $out->getTitle();
-	}
-
-	/**
-	 * @param array $json response
-	 * @return string
-	 */
-	protected function buildHtmlFromResponse( array $json ) {
-		$lead = $json['lead'];
-		$html = $lead['sections'][0]['text'] ?? '';
-
-		$remaining = $json['remaining'];
-
-		foreach ( $remaining['sections'] as $section ) {
-			if ( isset( $section['line'] ) ) {
-				$toc = $section['toclevel'] + 1;
-				$line = $section['line'];
-				$html .= "<h$toc>$line</h$toc>";
-			}
-			if ( isset( $section['text'] ) ) {
-				$html .= $section['text'];
-			}
-		}
-		return $html;
 	}
 
 	/**
@@ -79,17 +56,12 @@ class McsContentProvider implements IContentProvider {
 		// Parsoid renders HTML incompatible with PHP parser and needs its own styles
 		$this->out->addModuleStyles( 'mediawiki.skinning.content.parsoid' );
 
-		$url = $this->baseUrl . '/page/mobile-sections/';
+		$url = $this->baseUrl . '/page/html/';
 		$url .= urlencode( $title->getPrefixedDBkey() );
 
 		$resp = $this->fileGetContents( $url );
 		if ( $resp ) {
-			$json = FormatJson::decode( $resp, true );
-			if ( is_array( $json ) ) {
-				return $this->buildHtmlFromResponse( $json );
-			} else {
-				return '';
-			}
+			return $resp;
 		} else {
 			return '';
 		}
