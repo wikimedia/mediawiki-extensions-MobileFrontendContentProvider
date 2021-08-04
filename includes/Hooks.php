@@ -59,20 +59,16 @@ class Hooks {
 		$title = $out->getTitle();
 		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
 		if ( !$config->get( 'MFContentProviderEnabled' ) ) {
-			return false;
+			return;
 		}
 
-		$alwaysUseProvider = $config->get( 'MFAlwaysUseContentProvider' );
-		$ignoreLocal = !( $config->get( 'MFContentProviderTryLocalContentFirst' ) &&
-			$title->exists() );
+		// User has asked to honor local content so exit.
+		if ( $title->exists() && $config->get( 'MFContentProviderTryLocalContentFirst' ) ) {
+			return;
+		}
 
 		/** @var ContentProviderFactory $contentProviderFactory */
 		$contentProviderFactory = $services->getService( 'MobileFrontendContentProvider.Factory' );
 		$provider = $contentProviderFactory->getProvider( $out, true );
-
-		if ( $alwaysUseProvider && $ignoreLocal ) {
-			// bypass
-			return true;
-		}
 	}
 }

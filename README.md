@@ -46,10 +46,3 @@ API that can be queried to obtain content.
 
 * Type: `string`
 * Default: `https://en.wikipedia.org/w/api.php`
-
-#### $wgMFAlwaysUseContentProvider
-
-When enabled the ContentProvider will run on desktop views as well as mobile views.
-
-* Type: `boolean`
-* Default: `false`

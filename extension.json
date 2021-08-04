@@ -57,9 +57,6 @@
 		},
 		"MFContentProviderEnabled": {
 			"value": true
-		},
-		"MFAlwaysUseContentProvider": {
-			"value": false
 		}
 	},
 	"ServiceWiringFiles": [
