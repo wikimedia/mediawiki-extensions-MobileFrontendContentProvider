@@ -35,7 +35,6 @@ class ContentProviderFactory {
 			// It's very possible this might break compatibility with other extensions
 			// so this should not be used outside development :). Please see README.md
 			$out->addJsConfigVars( [
-				'wgMFContentProviderScriptPath' => $config->get( 'MFContentProviderScriptPath' ),
 				'wgScriptPath' => $contentProviderScriptPath
 			] );
 			// This injects a global ajaxSend event which ensures origin=* is added to all ajax requests

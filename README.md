@@ -3,13 +3,20 @@ Allows developers to source content for wiki pages from places other than the lo
 Configuration options
 ---------------------
 
+#### $wgMFContentProviderEnabled
+
+Disable/enable the content provider.
+
+* Type: `boolean`
+* Default: `true`
+
 #### $wgMFContentProviderClass
 
 Name of PHP class that is responsible for formatting HTML for mobile.
 Must implement IContentProvider.
 
 * Type: `string`
-* Default: `DefaultContentProvider`
+* Default: `MobileFrontendContentProviders\\MwApiContentProvider`
 
 #### MFContentProviderTryLocalContentFirst
 

@@ -58,6 +58,9 @@ class Hooks {
 		$services = MediaWikiServices::getInstance();
 		$title = $out->getTitle();
 		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
+		if ( !$config->get( 'MFContentProviderEnabled' ) ) {
+			return false;
+		}
 
 		$alwaysUseProvider = $config->get( 'MFAlwaysUseContentProvider' );
 		$ignoreLocal = !( $config->get( 'MFContentProviderTryLocalContentFirst' ) &&
