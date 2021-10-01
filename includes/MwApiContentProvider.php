@@ -3,6 +3,7 @@
 namespace MobileFrontendContentProviders;
 
 use FormatJson;
+use HTML;
 use MediaWiki\MediaWikiServices;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
@@ -60,7 +61,24 @@ class MwApiContentProvider implements IContentProvider {
 
 		$status = $response->execute();
 		if ( !$status->isOK() ) {
-			return '';
+			$msg = 'ContentProvider failed to load page ' . $url . ' with following error: '
+				. implode(
+					', ',
+					array_map( function ( $message ) {
+						$params = implode( ' ', $message['params'] );
+						return $message['message'] . ' (' . $params . ')';
+					}, $status->getErrors() )
+				);
+			return json_encode( [
+				'parse' => [
+					'text' => HTML::errorBox( $msg ),
+					'modules' => [],
+					'pageid' => -1,
+					'revid' => -1,
+					'modulestyles' => [],
+					'properties' => [],
+				]
+			] );
 		}
 
 		return $response->getContent();
