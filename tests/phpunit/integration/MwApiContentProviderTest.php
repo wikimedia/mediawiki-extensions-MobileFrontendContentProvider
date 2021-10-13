@@ -8,7 +8,7 @@ use MobileFrontendContentProviders\MwApiContentProvider;
  * @coversDefaultClass \MobileFrontendContentProviders\MwApiContentProvider
  * @covers ::__construct
  */
-class MwApiContentProviderTest extends MediaWikiTestCase {
+class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 	private const BASE_URL = '/w/api.php';
 	private const SKIN_NAME = 'testSkin';
 	private const REV_ID = 1;

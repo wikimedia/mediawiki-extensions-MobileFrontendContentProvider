@@ -9,7 +9,7 @@ use MobileFrontendContentProviders\MwApiContentProvider;
  * @group MobileFrontend
  * @coversDefaultClass \MobileFrontendContentProviders\ContentProviderFactory
  */
-class ContentProviderFactoryTest extends MediaWikiTestCase {
+class ContentProviderFactoryTest extends MediaWikiIntegrationTestCase {
 	// Test HTML
 	private const TEST_HTML = '<a>Anchor</a>';
 

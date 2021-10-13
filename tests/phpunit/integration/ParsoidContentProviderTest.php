@@ -8,7 +8,7 @@ use MobileFrontendContentProviders\ParsoidContentProvider;
  * @coversDefaultClass \MobileFrontendContentProviders\ParsoidContentProvider
  * @covers ::__construct
  */
-class ParsoidContentProviderTest extends MediaWikiTestCase {
+class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	private const BASE_URL = '/w/api.php';
 
 	/**
