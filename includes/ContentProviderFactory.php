@@ -3,6 +3,7 @@
 namespace MobileFrontendContentProviders;
 
 use Config;
+use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
 use RuntimeException;
 
@@ -58,7 +59,7 @@ class ContentProviderFactory {
 		$contentProviderClass = $this->config->get( 'MFContentProviderClass' );
 
 		if ( !class_exists( $contentProviderClass ) ) {
-			// Map old Mobilefrontend classes to new ones
+			// Map old MobileFrontend classes to new ones
 			$contentProviderClass = str_replace(
 				'MobileFrontend\ContentProviders',
 				'MobileFrontendContentProviders',

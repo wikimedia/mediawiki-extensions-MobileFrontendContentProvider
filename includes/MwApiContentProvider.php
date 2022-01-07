@@ -92,7 +92,7 @@ class MwApiContentProvider implements IContentProvider {
 		$query = 'action=parse&prop=revid|text|modules|sections|properties|langlinks';
 		$url = $this->baseUrl . '?formatversion=2&format=json&' . $query;
 		if ( $this->revId ) {
-			$url .= '&oldid=' . rawurlencode( $this->revId );
+			$url .= '&oldid=' . rawurlencode( (string)$this->revId );
 		} else {
 			$title = $out->getTitle();
 			if ( !$title ) {

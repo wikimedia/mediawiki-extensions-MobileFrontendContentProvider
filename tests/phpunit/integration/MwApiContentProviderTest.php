@@ -34,13 +34,9 @@ class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 
 	private function mockHTTPFactory( $rawResponse ) {
 		$httpRequestMock = $this->createMock( MWHttpRequest::class );
-
-		$httpRequestMock->expects( $this->at( 0 ) )
-			->method( 'execute' )
+		$httpRequestMock->method( 'execute' )
 			->willReturn( StatusValue::newGood() );
-
-		$httpRequestMock->expects( $this->at( 1 ) )
-			->method( 'getContent' )
+		$httpRequestMock->method( 'getContent' )
 			->willReturn( $rawResponse );
 
 		$factoryMock = $this->createMock( HttpRequestFactory::class );

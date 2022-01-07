@@ -4,6 +4,7 @@ namespace MobileFrontendContentProviders;
 use Action;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutputFlags;
+use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
 use ParserOutput;
 use SpecialPage;
@@ -21,6 +22,7 @@ class Hooks {
 	 * @param string $subpage subpage name
 	 */
 	public static function onSpecialPageBeforeExecute( SpecialPage $special, $subpage ) {
+		$services = MediaWikiServices::getInstance();
 		/** @var ContentProviderFactory $contentProviderFactory */
 		$contentProviderFactory = $services->getService( 'MobileFrontend.ContentProviderFactory' );
 		// Set foreign script path on special pages e.g. Special:Nearby
@@ -37,11 +39,12 @@ class Hooks {
 	 *
 	 * @param OutputPage $out the OutputPage object to which wikitext is added
 	 */
-	public static function onOutputPageBeforeHTML( $out ) {
-		$config = MediaWikiServices::getInstance()->getService( 'MobileFrontendContentProvider.Config' );
+	public static function onOutputPageBeforeHTML( OutputPage $out ) {
+		$services = MediaWikiServices::getInstance();
+		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
 		$contentProviderApi = $config->get( 'MFContentProviderScriptPath' );
 		if ( $contentProviderApi ) {
-			$out->addModule( 'mobile.contentProviderApi' );
+			$out->addModules( 'mobile.contentProviderApi' );
 		}
 	}
 
@@ -95,11 +98,11 @@ class Hooks {
 	 * Also enables Related Articles in the footer in the beta mode.
 	 * Adds inline script to allow opening of sections while JS is still loading
 	 *
-	 * @param ContentProviderFactory &$provider
+	 * @param IContentProvider &$provider
 	 * @param OutputPage $out the OutputPage object to which wikitext is added
 	 */
 	public static function onMobileFrontendContentProvider(
-		&$provider, $out
+		IContentProvider &$provider, OutputPage $out
 	) {
 		if ( !self::shouldApplyContentProvider( $out ) ) {
 			return;
