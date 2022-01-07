@@ -64,7 +64,7 @@ class MwApiContentProvider implements IContentProvider {
 			$msg = 'ContentProvider failed to load page ' . $url . ' with following error: '
 				. implode(
 					', ',
-					array_map( function ( $message ) {
+					array_map( static function ( $message ) {
 						$params = implode( ' ', $message['params'] );
 						return $message['message'] . ' (' . $params . ')';
 					}, $status->getErrors() )

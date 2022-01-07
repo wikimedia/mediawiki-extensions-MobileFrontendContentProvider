@@ -2,7 +2,6 @@
 
 namespace MobileFrontendContentProviders;
 
-use FormatJson;
 use MediaWiki\MediaWikiServices;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;

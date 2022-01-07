@@ -48,7 +48,6 @@ class ContentProviderFactory {
 	/**
 	 * @param OutputPage $out to allow the addition of modules and styles
 	 *  as required by the content
-	 * @param string $html available HTML
 	 * @param bool $provideTagline (optional) whether wikidata descriptions
 	 *  should be provided for if the provider supports it.
 	 * @throws RuntimeException Thrown when specified ContentProvider doesn't exist

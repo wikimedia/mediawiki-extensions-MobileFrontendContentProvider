@@ -101,7 +101,7 @@ class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 		);
 		$actual = $mwApiContentProvider->getHTML();
 
-		$this->assertSame( '', $actual );
+		$this->assertStringContainsString( 'ContentProvider failed to load page', $actual );
 	}
 
 	/**

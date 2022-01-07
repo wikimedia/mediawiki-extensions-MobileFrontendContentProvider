@@ -1,7 +1,8 @@
 <?php
 namespace MobileFrontendContentProviders;
-use SpecialPage;
+
 use MediaWiki\MediaWikiServices;
+use SpecialPage;
 
 class Hooks {
 	/**
@@ -31,7 +32,6 @@ class Hooks {
 	 * Adds inline script to allow opening of sections while JS is still loading
 	 *
 	 * @param OutputPage $out the OutputPage object to which wikitext is added
-	 * @param string &$text the HTML to be wrapped inside the #mw-content-text element
 	 */
 	public static function onOutputPageBeforeHTML( $out ) {
 		$config = MediaWikiServices::getInstance()->getService( 'MobileFrontendContentProvider.Config' );
@@ -49,8 +49,8 @@ class Hooks {
 	 * Also enables Related Articles in the footer in the beta mode.
 	 * Adds inline script to allow opening of sections while JS is still loading
 	 *
+	 * @param ContentProviderFactory &$provider
 	 * @param OutputPage $out the OutputPage object to which wikitext is added
-	 * @param string &$text the HTML to be wrapped inside the #mw-content-text element
 	 */
 	public static function onMobileFrontendContentProvider(
 		&$provider, $out

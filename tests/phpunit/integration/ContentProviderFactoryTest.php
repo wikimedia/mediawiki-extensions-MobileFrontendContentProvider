@@ -1,9 +1,8 @@
 <?php
 
 use MobileFrontendContentProviders\ContentProviderFactory;
-use MobileFrontendContentProviders\DefaultContentProvider;
-use MobileFrontendContentProviders\ParsoidContentProvider;
 use MobileFrontendContentProviders\MwApiContentProvider;
+use MobileFrontendContentProviders\ParsoidContentProvider;
 
 /**
  * @group MobileFrontend
