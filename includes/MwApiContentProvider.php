@@ -3,7 +3,7 @@
 namespace MobileFrontendContentProviders;
 
 use FormatJson;
-use HTML;
+use Html;
 use MediaWiki\MediaWikiServices;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
@@ -71,7 +71,7 @@ class MwApiContentProvider implements IContentProvider {
 				);
 			return json_encode( [
 				'parse' => [
-					'text' => HTML::errorBox( $msg ),
+					'text' => Html::errorBox( $msg ),
 					'modules' => [],
 					'pageid' => -1,
 					'revid' => -1,

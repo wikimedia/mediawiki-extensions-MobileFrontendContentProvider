@@ -1,6 +1,7 @@
 <?php
 namespace MobileFrontendContentProviders;
 
+use Action;
 use MediaWiki\MediaWikiServices;
 use SpecialPage;
 
@@ -67,6 +68,9 @@ class Hooks {
 			return;
 		}
 
+		if ( Action::getActionName( $out->getContext() ) !== 'view' ) {
+			return;
+		}
 		/** @var ContentProviderFactory $contentProviderFactory */
 		$contentProviderFactory = $services->getService( 'MobileFrontendContentProvider.Factory' );
 		$provider = $contentProviderFactory->getProvider( $out, true );
