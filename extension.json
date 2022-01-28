@@ -36,6 +36,7 @@
 		"remoteExtPath": "MobileFrontendContentProvider"
 	},
 	"Hooks": {
+		"OutputPageParserOutput": "MobileFrontendContentProviders\\Hooks::onOutputPageParserOutput",
 		"MobileFrontendContentProvider": "MobileFrontendContentProviders\\Hooks::onMobileFrontendContentProvider",
 		"OutputPageBeforeHTML": "MobileFrontendContentProviders\\Hooks::onOutputPageBeforeHTML"
 	},

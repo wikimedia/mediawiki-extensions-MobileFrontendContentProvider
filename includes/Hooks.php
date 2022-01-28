@@ -3,6 +3,8 @@ namespace MobileFrontendContentProviders;
 
 use Action;
 use MediaWiki\MediaWikiServices;
+use OutputPage;
+use ParserOutput;
 use SpecialPage;
 
 class Hooks {
@@ -43,6 +45,43 @@ class Hooks {
 	}
 
 	/**
+	 * OutputPageParserOutput hook handler
+	 * @see https://www.mediawiki.org/wiki/Extension:MobileFrontend/onOutputPageParserOutput
+	 *
+	 * @param OutputPage $out
+	 * @param ParserOutput $parserOutput
+	 */
+	public static function onOutputPageParserOutput( OutputPage $out, ParserOutput $parserOutput ) {
+		if ( !self::shouldApplyContentProvider( $out ) ) {
+			return;
+		}
+		$parserOutput->setTOCHTML( '<!-- >' );
+	}
+
+	/**
+	 * @param OutputPage $out
+	 * @return bool
+	 */
+	private static function shouldApplyContentProvider( $out ) {
+		$services = MediaWikiServices::getInstance();
+		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
+		$title = $out->getTitle();
+		if ( !$config->get( 'MFContentProviderEnabled' ) ) {
+			return false;
+		}
+
+		// User has asked to honor local content so exit.
+		if ( $config->get( 'MFContentProviderTryLocalContentFirst' ) && $title->exists() ) {
+			return false;
+		}
+
+		if ( Action::getActionName( $out->getContext() ) !== 'view' ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * MobileFrontendContentProvider hook handler
 	 * @see https://www.mediawiki.org/wiki/Extension:MobileFrontend/onMobileFrontendContentProvider
 	 *
@@ -56,21 +95,10 @@ class Hooks {
 	public static function onMobileFrontendContentProvider(
 		&$provider, $out
 	) {
+		if ( !self::shouldApplyContentProvider( $out ) ) {
+			return;
+		}
 		$services = MediaWikiServices::getInstance();
-		$title = $out->getTitle();
-		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
-		if ( !$config->get( 'MFContentProviderEnabled' ) ) {
-			return;
-		}
-
-		// User has asked to honor local content so exit.
-		if ( $title->exists() && $config->get( 'MFContentProviderTryLocalContentFirst' ) ) {
-			return;
-		}
-
-		if ( Action::getActionName( $out->getContext() ) !== 'view' ) {
-			return;
-		}
 		/** @var ContentProviderFactory $contentProviderFactory */
 		$contentProviderFactory = $services->getService( 'MobileFrontendContentProvider.Factory' );
 		$provider = $contentProviderFactory->getProvider( $out, true );

@@ -89,7 +89,7 @@ class MwApiContentProvider implements IContentProvider {
 	 */
 	public function getHTML() {
 		$out = $this->out;
-		$query = 'action=parse&prop=revid|text|modules|properties|langlinks';
+		$query = 'action=parse&prop=revid|text|modules|sections|properties|langlinks';
 		$url = $this->baseUrl . '?formatversion=2&format=json&' . $query;
 		if ( $this->revId ) {
 			$url .= '&oldid=' . rawurlencode( $this->revId );
@@ -144,6 +144,10 @@ class MwApiContentProvider implements IContentProvider {
 					$langlinks[] = $lang['lang'] . ':' . $lang['title'];
 				}
 				$out->setLanguageLinks( $langlinks );
+			}
+			$sections = $parse['sections'] ?? null;
+			if ( $sections ) {
+				$out->setSections( $sections );
 			}
 			return $parse['text'];
 		}
