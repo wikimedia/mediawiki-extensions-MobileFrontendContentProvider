@@ -3,6 +3,7 @@ namespace MobileFrontendContentProviders;
 
 use Action;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutputFlags;
 use OutputPage;
 use ParserOutput;
 use SpecialPage;
@@ -55,7 +56,12 @@ class Hooks {
 		if ( !self::shouldApplyContentProvider( $out ) ) {
 			return;
 		}
-		$parserOutput->setTOCHTML( '<!-- >' );
+		if ( class_exists( 'MediaWiki\Parser\ParserOutputFlags' ) ) {
+			$parserOutput->setOutputFlag( ParserOutputFlags::SHOW_TOC );
+		} else {
+			// For MediaWiki < 1.39
+			$parserOutput->setTOCHTML( '<!-- >' );
+		}
 	}
 
 	/**
