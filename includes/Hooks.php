@@ -7,28 +7,8 @@ use MediaWiki\Parser\ParserOutputFlags;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
 use ParserOutput;
-use SpecialPage;
 
 class Hooks {
-	/**
-	 * Invocation of hook SpecialPageBeforeExecute
-	 *
-	 * We use this hook to ensure that login/account creation pages
-	 * are redirected to HTTPS if they are not accessed via HTTPS and
-	 * $wgSecureLogin == true - but only when using the
-	 * mobile site.
-	 *
-	 * @param SpecialPage $special
-	 * @param string $subpage subpage name
-	 */
-	public static function onSpecialPageBeforeExecute( SpecialPage $special, $subpage ) {
-		$services = MediaWikiServices::getInstance();
-		/** @var ContentProviderFactory $contentProviderFactory */
-		$contentProviderFactory = $services->getService( 'MobileFrontend.ContentProviderFactory' );
-		// Set foreign script path on special pages e.g. Special:Nearby
-		$contentProviderFactory->addForeignScriptPath( $out );
-	}
-
 	/**
 	 * OutputPageBeforeHTML hook handler
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/OutputPageBeforeHTML
