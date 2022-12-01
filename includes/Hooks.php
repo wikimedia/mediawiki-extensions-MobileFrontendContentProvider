@@ -41,9 +41,6 @@ class Hooks {
 		}
 		if ( class_exists( 'MediaWiki\Parser\ParserOutputFlags' ) ) {
 			$parserOutput->setOutputFlag( ParserOutputFlags::SHOW_TOC );
-		} else {
-			// For MediaWiki < 1.39
-			$parserOutput->setTOCHTML( '<!-- >' );
 		}
 	}
 
