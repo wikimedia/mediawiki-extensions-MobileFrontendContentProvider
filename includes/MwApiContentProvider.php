@@ -7,6 +7,7 @@ use Html;
 use MediaWiki\MediaWikiServices;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
+use Wikimedia\Parsoid\Core\TOCData;
 
 class MwApiContentProvider implements IContentProvider {
 	/**
@@ -147,7 +148,7 @@ class MwApiContentProvider implements IContentProvider {
 			}
 			$sections = $parse['sections'] ?? null;
 			if ( $sections ) {
-				$out->setSections( $sections );
+				$out->setTOCData( TOCData::fromLegacy( $sections ) );
 			}
 			return $parse['text'];
 		}
