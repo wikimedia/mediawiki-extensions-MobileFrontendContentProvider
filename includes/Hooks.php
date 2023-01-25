@@ -3,10 +3,8 @@ namespace MobileFrontendContentProviders;
 
 use Action;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Parser\ParserOutputFlags;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
-use ParserOutput;
 
 class Hooks {
 	/**
@@ -25,22 +23,6 @@ class Hooks {
 		$contentProviderApi = $config->get( 'MFContentProviderScriptPath' );
 		if ( $contentProviderApi ) {
 			$out->addModules( 'mobile.contentProviderApi' );
-		}
-	}
-
-	/**
-	 * OutputPageParserOutput hook handler
-	 * @see https://www.mediawiki.org/wiki/Extension:MobileFrontend/onOutputPageParserOutput
-	 *
-	 * @param OutputPage $out
-	 * @param ParserOutput $parserOutput
-	 */
-	public static function onOutputPageParserOutput( OutputPage $out, ParserOutput $parserOutput ) {
-		if ( !self::shouldApplyContentProvider( $out ) ) {
-			return;
-		}
-		if ( class_exists( 'MediaWiki\Parser\ParserOutputFlags' ) ) {
-			$parserOutput->setOutputFlag( ParserOutputFlags::SHOW_TOC );
 		}
 	}
 

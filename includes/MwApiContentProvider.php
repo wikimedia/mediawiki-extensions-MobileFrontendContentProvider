@@ -5,9 +5,10 @@ namespace MobileFrontendContentProviders;
 use FormatJson;
 use Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutputFlags;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
-use Wikimedia\Parsoid\Core\TOCData;
+use ParserOutput;
 
 class MwApiContentProvider implements IContentProvider {
 	/**
@@ -148,7 +149,10 @@ class MwApiContentProvider implements IContentProvider {
 			}
 			$sections = $parse['sections'] ?? null;
 			if ( $sections ) {
-				$out->setTOCData( TOCData::fromLegacy( $sections ) );
+				$tocPout = new ParserOutput;
+				$tocPout->setSections( $sections );
+				$tocPout->setOutputFlag( ParserOutputFlags::SHOW_TOC, $parse['showtoc'] ?? true );
+				$out->addParserOutputMetadata( $tocPout );
 			}
 			return $parse['text'];
 		}
