@@ -88,7 +88,11 @@ class ContentProviderFactory {
 				$skinName = $out->getSkin()->getSkinName();
 				$rev = $out->getRequest()->getIntOrNull( 'oldid' );
 				$baseUrl = $this->config->get( 'MFMwApiContentProviderBaseUri' );
-				return new MwApiContentProvider( $baseUrl, $out, $skinName, $rev, $provideTagline );
+				$articlePath = null;
+				if ( $this->config->get( 'MFMwApiContentProviderFixArticlePath' ) ) {
+					$articlePath = $this->config->get( 'ArticlePath' );
+				}
+				return new MwApiContentProvider( $baseUrl, $articlePath, $out, $skinName, $rev, $provideTagline );
 			case self::PHP_PARSER:
 				return null;
 			default:

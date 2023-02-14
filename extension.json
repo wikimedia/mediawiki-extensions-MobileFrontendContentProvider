@@ -49,6 +49,9 @@
 		"MFMwApiContentProviderBaseUri": {
 			"value": "https://en.wikipedia.org/w/api.php"
 		},
+		"MFMwApiContentProviderFixArticlePath": {
+			"value": false
+		},
 		"MFContentProviderScriptPath": {
 			"value": ""
 		},

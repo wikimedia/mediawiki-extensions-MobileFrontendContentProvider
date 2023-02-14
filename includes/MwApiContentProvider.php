@@ -4,17 +4,24 @@ namespace MobileFrontendContentProviders;
 
 use FormatJson;
 use Html;
+use MediaWiki\HtmlHelper;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutputFlags;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
 use ParserOutput;
+use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
 class MwApiContentProvider implements IContentProvider {
 	/**
 	 * @var string
 	 */
 	private $baseUrl;
+
+	/**
+	 * @var string|null
+	 */
+	private $articlePath;
 
 	/**
 	 * @var OutputPage
@@ -38,15 +45,17 @@ class MwApiContentProvider implements IContentProvider {
 
 	/**
 	 * @param string $baseUrl for the MediaWiki API to be used minus query string e.g. /w/api.php
+	 * @param string|null $articlePath target article path to change links to (null for no change)
 	 * @param OutputPage $out so that the ResourceLoader modules specific to the page can be added
 	 * @param string $skinName the skin name the content is being provided for
 	 * @param int|null $revId optional
 	 * @param bool $provideTagline optional
 	 */
-	public function __construct( $baseUrl, OutputPage $out, $skinName, $revId = null,
+	public function __construct( $baseUrl, ?string $articlePath, OutputPage $out, $skinName, $revId = null,
 		$provideTagline = false
 	) {
 		$this->baseUrl = $baseUrl;
+		$this->articlePath = $articlePath;
 		$this->out = $out;
 		$this->skinName = $skinName;
 		$this->revId = $revId;
@@ -154,7 +163,43 @@ class MwApiContentProvider implements IContentProvider {
 				$tocPout->setOutputFlag( ParserOutputFlags::SHOW_TOC, $parse['showtoc'] ?? true );
 				$out->addParserOutputMetadata( $tocPout );
 			}
-			return $parse['text'];
+
+			$text = $parse['text'];
+
+			if ( $this->articlePath ) {
+				// Fix the article path of href's if required
+				$resp = $this->fileGetContents(
+					$this->baseUrl . '?action=query&format=json&meta=siteinfo&formatversion=2'
+				);
+				$json = FormatJson::decode( $resp, true );
+				if ( is_array( $json ) && array_key_exists( 'query', $json ) ) {
+					$remoteArticlePath = $json['query']['general']['articlepath'];
+					if ( $remoteArticlePath !== $this->articlePath ) {
+						$pattern = '/' . str_replace(
+							preg_quote( '$1', '/' ),
+							'([^?]*)',
+							preg_quote( $remoteArticlePath, '/' )
+						) . '/';
+						$articlePath = $this->articlePath;
+						$text = HtmlHelper::modifyElements(
+							$text,
+							static function ( SerializerNode $node ): bool {
+								return $node->name === 'a' && isset( $node->attrs['href'] );
+							},
+							static function ( SerializerNode $node ) use ( $pattern, $articlePath ): SerializerNode {
+								$node->attrs['href'] = preg_replace(
+									$pattern,
+									$articlePath,
+									$node->attrs['href']
+								);
+								return $node;
+							}
+						);
+					}
+				}
+			}
+
+			return $text;
 		}
 
 		return '';

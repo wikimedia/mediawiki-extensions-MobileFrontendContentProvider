@@ -46,3 +46,11 @@ API that can be queried to obtain content.
 
 * Type: `string`
 * Default: `https://en.wikipedia.org/w/api.php`
+
+#### $wgMFMwApiContentProviderFixArticlePath
+
+Attempt to map link URLs to the local wiki's article path, if it differs from that
+of the remote wiki.
+
+* Type: `boolean`
+* Default: `false`

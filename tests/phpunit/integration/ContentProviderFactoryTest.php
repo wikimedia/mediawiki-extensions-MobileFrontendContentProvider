@@ -107,7 +107,8 @@ class ContentProviderFactoryTest extends MediaWikiIntegrationTestCase {
 			'MFContentProviderTryLocalContentFirst' => $localContent,
 			'MFContentProviderScriptPath' => false,
 			'MFParsoidContentProviderBaseUri' => 'http://localhost/',
-			'MFMwApiContentProviderBaseUri' => 'http://localhost/'
+			'MFMwApiContentProviderBaseUri' => 'http://localhost/',
+			'MFMwApiContentProviderFixArticlePath' => false,
 		] );
 		$factory = new ContentProviderFactory( $config );
 		$provider = $factory->getProvider( $mockOutputPage, self::TEST_HTML );

@@ -21,7 +21,7 @@ class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 	private function makeMwApiContentProvider(
 		$baseUrl, OutputPage $outputPage, $skinName, $revId = null, $provideTagline = false
 	) {
-		return new MwApiContentProvider( $baseUrl, $outputPage, $skinName, $revId, $provideTagline );
+		return new MwApiContentProvider( $baseUrl, null, $outputPage, $skinName, $revId, $provideTagline );
 	}
 
 	/**
