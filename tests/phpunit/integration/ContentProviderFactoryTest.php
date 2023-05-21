@@ -124,7 +124,7 @@ class ContentProviderFactoryTest extends MediaWikiIntegrationTestCase {
 	 * Data provider for testGetProviderWithDefaultContentProviderWithNoTitle()
 	 * @return array
 	 */
-	public function contentProvidersDataProvider() {
+	public static function contentProvidersDataProvider() {
 		return [
 			[ ParsoidContentProvider::class, true, null ],
 			[ MwApiContentProvider::class, true, null ],
