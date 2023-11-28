@@ -101,26 +101,37 @@ class MwApiContentProvider implements IContentProvider {
 	public function getHTML() {
 		$out = $this->out;
 		$query = 'action=parse&prop=revid|text|modules|sections|properties|langlinks';
-		$url = $this->baseUrl . '?formatversion=2&format=json&' . $query;
+		$query = '?formatversion=2&format=json&' . $query;
+		$baseUrl = $this->baseUrl;
+
 		if ( $this->revId ) {
-			$url .= '&oldid=' . rawurlencode( (string)$this->revId );
+			$query .= '&oldid=' . rawurlencode( (string)$this->revId );
 		} else {
 			$title = $out->getTitle();
 			if ( !$title ) {
 				return '';
 			}
-			$url .= '&page=' . rawurlencode( $title->getPrefixedDBkey() );
+			$dbKey = $title->getPrefixedDBkey();
+			$prefixedTitle = rawurlencode( $dbKey );
+			$parts = explode( ':', $dbKey );
+			if ( count( $parts ) === 2 ) {
+				// change URL
+				$lang = strtolower( $parts[0] );
+				$baseUrl = preg_replace( '/https:\/\/en\./', 'https://' . $lang . '.', $baseUrl );
+
+			}
+			$query .= '&page=' . $prefixedTitle;
 		}
 		// The skin must exist on the target wiki and not be hidden for this to work.
 		if ( in_array( $this->skinName, [ 'vector', 'minerva', 'monobook', 'timeless', 'modern', 'vector-2022' ] ) ) {
 			// `useskin` - informs MobileFrontend and various other things of context to run in
 			// `skin` - informs API of what content to generate.
-			$url .= '&useskin=' . $this->skinName . '&skin=' . $this->skinName;
+			$query .= '&useskin=' . $this->skinName . '&skin=' . $this->skinName;
 		} else {
-			$url .= '&skin=apioutput';
+			$query .= '&skin=apioutput';
 		}
 
-		$resp = $this->fileGetContents( $url );
+		$resp = $this->fileGetContents( $baseUrl . $query );
 		$json = FormatJson::decode( $resp, true );
 		// As $this->fileGetContents() may return '' in some cases, doing;
 		// FormatJson::decode( '', true ); will return "null" so check it.
