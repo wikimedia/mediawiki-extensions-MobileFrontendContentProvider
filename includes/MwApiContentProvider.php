@@ -153,7 +153,7 @@ class MwApiContentProvider implements IContentProvider {
 			$ignoreKeys = [ 'noexternallanglinks' ];
 			// Copy page properties across excluding a few we know not to work due to php serialisation)
 			foreach ( array_diff( array_keys( $parserProps ), $ignoreKeys ) as $key ) {
-				$out->setProperty( $key,  $parserProps[ $key ] );
+				$out->setProperty( $key, $parserProps[ $key ] );
 			}
 			// Forward certain variables so that the page is not registered as "missing"
 			$out->addJsConfigVars( [
