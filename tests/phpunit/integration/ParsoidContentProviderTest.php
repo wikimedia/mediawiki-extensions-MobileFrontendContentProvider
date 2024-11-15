@@ -16,7 +16,7 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	 * @param Title|null $title
 	 * @return ParsoidContentProvider
 	 */
-	private function makeParsoidContentProvider( $baseUrl, Title $title = null ) {
+	private function makeParsoidContentProvider( $baseUrl, ?Title $title = null ) {
 		$out = new OutputPage( new RequestContext() );
 		if ( $title ) {
 			$out->setTitle( $title );
