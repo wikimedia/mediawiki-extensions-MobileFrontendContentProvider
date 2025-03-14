@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Title\Title;
 use MobileFrontendContentProviders\ParsoidContentProvider;
 
 /**

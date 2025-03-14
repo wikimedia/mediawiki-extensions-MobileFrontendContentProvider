@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Title\Title;
 use MobileFrontendContentProviders\MwApiContentProvider;
 
 /**
@@ -175,6 +176,8 @@ class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 			->disableOriginalConstructor()
 			->onlyMethods( [
 					'getTitle',
+					'setLanguageLinks',
+					'getLanguageLinks',
 					'addModules',
 					'addModuleStyles',
 					'addJsConfigVars'
@@ -202,8 +205,6 @@ class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 'Some text', $actual );
 
-		// Also, this should be in sync with the $rawResponse above (langlinks)
-		$this->assertContains( 'test:MF', $mockOutputPage->getLanguageLinks() );
 		$this->assertSame( 'No desc', $mockOutputPage->getProperty( 'wgMFDescription' ) );
 	}
 }

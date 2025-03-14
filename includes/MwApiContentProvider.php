@@ -3,8 +3,8 @@
 namespace MobileFrontendContentProviders;
 
 use FormatJson;
-use Html;
-use MediaWiki\HtmlHelper;
+use MediaWiki\Html\Html;
+use MediaWiki\Html\HtmlHelper;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\ParserOutputFlags;
 use MobileFrontend\ContentProviders\IContentProvider;

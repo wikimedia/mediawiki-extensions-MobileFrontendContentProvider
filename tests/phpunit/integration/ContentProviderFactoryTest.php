@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
 use MobileFrontendContentProviders\ContentProviderFactory;
 use MobileFrontendContentProviders\MwApiContentProvider;
 use MobileFrontendContentProviders\ParsoidContentProvider;

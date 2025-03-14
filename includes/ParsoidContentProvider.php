@@ -3,9 +3,9 @@
 namespace MobileFrontendContentProviders;
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
-use Title;
 
 /**
  * Sources content from the Mobile-Content-Service

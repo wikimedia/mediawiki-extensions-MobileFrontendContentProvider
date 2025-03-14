@@ -2,6 +2,7 @@
 namespace MobileFrontendContentProviders;
 
 use Action;
+use MediaWiki\Api\ApiParse;
 use MediaWiki\MediaWikiServices;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
@@ -26,6 +27,10 @@ class Hooks {
 		}
 	}
 
+	public static function onApiParseMakeOutputPage( ApiParse $api, OutputPage $out ) {
+		$out->setProperty( 'DisableMobileFrontendContentProvider', true );
+	}
+
 	/**
 	 * @param OutputPage $out
 	 * @return bool
@@ -34,6 +39,10 @@ class Hooks {
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
 		$title = $out->getTitle();
+		// don't run on action=parse.
+		if ( $out->getProperty( 'DisableMobileFrontendContentProvider' ) ) {
+			return false;
+		}
 		if ( !$config->get( 'MFContentProviderEnabled' ) ) {
 			return false;
 		}
