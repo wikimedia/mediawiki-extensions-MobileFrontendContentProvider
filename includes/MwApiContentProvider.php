@@ -113,13 +113,6 @@ class MwApiContentProvider implements IContentProvider {
 			}
 			$dbKey = $title->getPrefixedDBkey();
 			$prefixedTitle = rawurlencode( $dbKey );
-			$parts = explode( ':', $dbKey );
-			if ( count( $parts ) === 2 ) {
-				// change URL
-				$lang = strtolower( $parts[0] );
-				$baseUrl = preg_replace( '/https:\/\/en\./', 'https://' . $lang . '.', $baseUrl );
-
-			}
 			$query .= '&page=' . $prefixedTitle;
 		}
 		// The skin must exist on the target wiki and not be hidden for this to work.
