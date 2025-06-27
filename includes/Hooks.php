@@ -39,6 +39,10 @@ class Hooks {
 		$services = MediaWikiServices::getInstance();
 		$config = $services->getService( 'MobileFrontendContentProvider.Config' );
 		$title = $out->getTitle();
+		// Don't apply content provider in hook for tests
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			return false;
+		}
 		// don't run on action=parse.
 		if ( $out->getProperty( 'DisableMobileFrontendContentProvider' ) ) {
 			return false;

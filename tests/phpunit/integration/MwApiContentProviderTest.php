@@ -176,7 +176,7 @@ class MwApiContentProviderTest extends MediaWikiIntegrationTestCase {
 			->disableOriginalConstructor()
 			->onlyMethods( [
 					'getTitle',
-					'setLanguageLinks',
+					'addLanguageLinks',
 					'getLanguageLinks',
 					'addModules',
 					'addModuleStyles',
