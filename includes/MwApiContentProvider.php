@@ -6,10 +6,11 @@ use FormatJson;
 use MediaWiki\Html\Html;
 use MediaWiki\Html\HtmlHelper;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Output\OutputPage;
+use MediaWiki\Parser\ParserOptions;
+use MediaWiki\Parser\ParserOutput;
 use MediaWiki\Parser\ParserOutputFlags;
 use MobileFrontend\ContentProviders\IContentProvider;
-use OutputPage;
-use ParserOutput;
 use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
 class MwApiContentProvider implements IContentProvider {
@@ -95,6 +96,21 @@ class MwApiContentProvider implements IContentProvider {
 		return $response->getContent();
 	}
 
+	private function shouldUseParsoid(): bool {
+		$context = $this->out->getContext();
+		$services = MediaWikiServices::getInstance();
+		if ( !$services->hasService( 'ParserMigration.Oracle' ) ) {
+			$popts = ParserOptions::newFromContext( $context );
+			return $popts->getUseParsoid();
+		}
+		$oracle = $services->getService( 'ParserMigration.Oracle' );
+		return $oracle->shouldUseParsoid(
+			$context->getUser(),
+			$context->getRequest(),
+			$context->getTitle()
+		);
+	}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -102,6 +118,11 @@ class MwApiContentProvider implements IContentProvider {
 		$out = $this->out;
 		$query = 'action=parse&prop=revid|text|modules|sections|properties|langlinks';
 		$query = '?formatversion=2&format=json&' . $query;
+		$query .= (
+			// T399897 `parsoid=1` is deprecated, but older wikis require it
+			$this->shouldUseParsoid() ? '&parser=parsoid&parsoid=1' :
+			'&parser=legacy'
+		);
 		$baseUrl = $this->baseUrl;
 
 		if ( $this->revId ) {
