@@ -10,7 +10,15 @@ use MobileFrontendContentProviders\ParsoidContentProvider;
  * @covers ::__construct
  */
 class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
-	private const BASE_URL = '/w/api.php';
+	private const BASE_URL = '';
+
+	/**
+	 * @param string $html
+	 * @return string
+	 */
+	private function wrapHTML( $html ) {
+		return '<html><head><title>full page html</title></head><body>' . $html . '</body></html>';
+	}
 
 	/**
 	 * @param string $baseUrl
@@ -109,7 +117,7 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 		$factoryMock = $this->createMock( HttpRequestFactory::class );
 		$factoryMock->expects( $this->once() )
 			->method( 'create' )
-			->with( self::BASE_URL . '/page/html/Test_Title' )
+			->with( self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=apioutput&useformat=mobile' )
 			->willReturn( $httpFalseRequestMock );
 
 		$title = $this->createTestTitle();
@@ -128,12 +136,18 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	public function testGetHtmlWithResponseDecodedNotArray() {
 		$title = $this->createTestTitle();
 
-		$url = self::BASE_URL . '/page/html/Test_Title';
-		$this->setService( 'HttpRequestFactory', $this->mockHTTPFactory( $url, 'text' ) );
+		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=apioutput&useformat=mobile';
+		$this->setService(
+			'HttpRequestFactory',
+			$this->mockHTTPFactory(
+				$url,
+				$this->wrapHTML( '<div class="mw-parser-output">text</div>' )
+			)
+		);
 		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
 		$actual = $ParsoidContentProvider->getHTML();
 
-		$this->assertSame( 'text', $actual );
+		$this->assertSame( '<div class="mw-parser-output">text</div>', $actual );
 	}
 
 	/**
@@ -141,15 +155,15 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::fileGetContents
 	 */
 	public function testGetHtmlWithValidResponse() {
-		$sampleResponse = 'value<h2>l</h2>t';
+		$sampleResponse = $this->wrapHTML( '<div class="mw-parser-output">value<h2>l</h2>t</div>' );
 		$title = $this->createTestTitle();
 
-		$url = self::BASE_URL . '/page/html/Test_Title';
+		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=apioutput&useformat=mobile';
 		$this->setService( 'HttpRequestFactory', $this->mockHTTPFactory( $url, $sampleResponse ) );
 		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
 		$actual = $ParsoidContentProvider->getHTML();
 
-		$expected = "value<h2>l</h2>t";
+		$expected = '<div class="mw-parser-output">value<h2>l</h2>t</div>';
 		$this->assertSame( $expected, $actual );
 	}
 }

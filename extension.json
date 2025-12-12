@@ -57,7 +57,7 @@
 			"value": ""
 		},
 		"MFParsoidContentProviderBaseUri": {
-			"value": "https://en.wikipedia.org/api/rest_v1"
+			"value": "https://en.wikipedia.org"
 		},
 		"MFContentProviderEnabled": {
 			"value": true

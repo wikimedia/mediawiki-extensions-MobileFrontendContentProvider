@@ -3,6 +3,8 @@
 namespace MobileFrontendContentProviders;
 
 use Config;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Registration\ExtensionRegistry;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
 use RuntimeException;
@@ -79,15 +81,69 @@ class ContentProviderFactory {
 		}
 
 		$this->addForeignScriptPath( $out );
+		$parsoidClass = 'MobileFrontendContentProviders\\ParsoidContentProvider';
 
+		$shouldUseParsoid = false;
+		$context = $out->getContext();
+		$req = $context->getRequest();
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'ParserMigration' ) ) {
+			$oracle = MediaWikiServices::getInstance()->getService( 'ParserMigration.Oracle' );
+			$shouldUseParsoid =
+				$oracle->shouldUseParsoid( $context->getUser(), $req, $title );
+		}
+		$providerType = $out->getRequest()->getText( 'mfprovidertype' );
+
+		$useParsoid = $out->getRequest()->getBool( 'useparsoid' );
+		if ( $useParsoid ) {
+			$contentProviderClass = $parsoidClass;
+		}
+
+		// Where default is parsoid switchover
+		if ( $shouldUseParsoid && !$providerType && !$useParsoid ) {
+			$providerType = 'parsoid';
+		}
+		switch ( $providerType ) {
+			case 'parsoid':
+				$contentProviderClass = $parsoidClass;
+				break;
+			default:
+				break;
+		}
+		$project = $out->getRequest()->getText( 'mfproviderproject' );
+		$lang = $out->getRequest()->getText( 'mfproviderlang' ) ?: 'en';
+		$baseUrlParsoid = $this->config->get( 'MFParsoidContentProviderBaseUri' );
+		switch ( $project ) {
+			case 'wikifunctions':
+				throw new RuntimeException( 'Not supported!' );
+			case 'meta':
+				$baseUrl = 'https://meta.wikimedia.org/w/api.php';
+				$baseUrlParsoid = 'https://meta.wikimedia.org/';
+				break;
+			case 'mediawiki':
+				$baseUrl = 'https://www.' . $project . '.org/w/api.php';
+				$baseUrlParsoid = 'https://www.' . $project . '.org/';
+				break;
+			case 'wikiversity':
+			case 'wikiquote':
+			case 'wikinews':
+			case 'wikisource':
+			case 'wikibooks':
+			case 'wiktionary':
+			case 'wikivoyage':
+			case 'wikipedia':
+				$baseUrl = 'https://' . $lang . '.' . $project . '.org/w/api.php';
+				$baseUrlParsoid = 'https://' . $lang . '.' . $project . '.org/';
+				break;
+			default:
+				$baseUrl = $this->config->get( 'MFMwApiContentProviderBaseUri' );
+				break;
+		}
 		switch ( $contentProviderClass ) {
 			case self::PARSOID_API:
-				$baseUrl = $this->config->get( 'MFParsoidContentProviderBaseUri' );
-				return new ParsoidContentProvider( $baseUrl, $out );
+				return new ParsoidContentProvider( $baseUrlParsoid, $out );
 			case self::MW_API:
 				$skinName = $out->getSkin()->getSkinName();
 				$rev = $out->getRequest()->getIntOrNull( 'oldid' );
-				$baseUrl = $this->config->get( 'MFMwApiContentProviderBaseUri' );
 				$articlePath = null;
 				if ( $this->config->get( 'MFMwApiContentProviderFixArticlePath' ) ) {
 					$articlePath = $this->config->get( 'ArticlePath' );

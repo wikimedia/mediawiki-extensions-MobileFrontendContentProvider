@@ -88,6 +88,8 @@ class ContentProviderFactoryTest extends MediaWikiIntegrationTestCase {
 		$config = new HashConfig( [
 			'MFContentProviderClass' => ContentProviderFactory::class,
 			'MFContentProviderTryLocalContentFirst' => false,
+			'MFParsoidContentProviderBaseUri' => 'http://localhost/',
+			'MFMwApiContentProviderBaseUri' => 'http://localhost/',
 			'MFContentProviderScriptPath' => false
 		] );
 		$factory = new ContentProviderFactory( $config );

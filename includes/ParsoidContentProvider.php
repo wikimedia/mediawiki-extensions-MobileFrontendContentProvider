@@ -6,6 +6,9 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
+use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
  * Sources content from the Mobile-Content-Service
@@ -56,14 +59,33 @@ class ParsoidContentProvider implements IContentProvider {
 		// Parsoid renders HTML incompatible with PHP parser and needs its own styles
 		$this->out->addModuleStyles( 'mediawiki.skinning.content.parsoid' );
 
-		$url = $this->baseUrl . '/page/html/';
+		$url = $this->baseUrl . '/wiki/';
 		$url .= urlencode( $title->getPrefixedDBkey() );
+		$url .= '?useparsoid=1&useskin=apioutput&useformat=mobile';
 
 		$resp = $this->fileGetContents( $url );
 		if ( $resp ) {
-			return $resp;
+			$html = $resp;
 		} else {
+			$html = '';
+		}
+		$doc = DOMUtils::parseHTML( $html );
+		$body = DOMCompat::getBody( $doc );
+		$pOut = DOMCompat::querySelector( $body, '.mw-parser-output' );
+		if ( !$pOut ) {
 			return '';
 		}
+		$container = $pOut->parentNode;
+		foreach ( $container->childNodes as $childNode ) {
+			if (
+				get_class( $childNode ) !== 'Wikimedia\Parsoid\DOM\Text' &&
+				strpos( $childNode->getAttribute( 'class' ), 'mw-parser-output' ) === false
+			) {
+				$childNode->parentNode->removeChild( $childNode );
+			}
+		}
+		return $container ? XHtmlSerializer::serialize(
+			$container, [ 'innerXML' => true, 'smartQuote' => false ]
+		)['html'] : '';
 	}
 }

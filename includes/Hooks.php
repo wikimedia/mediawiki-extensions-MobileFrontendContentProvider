@@ -82,6 +82,6 @@ class Hooks {
 		$services = MediaWikiServices::getInstance();
 		/** @var ContentProviderFactory $contentProviderFactory */
 		$contentProviderFactory = $services->getService( 'MobileFrontendContentProvider.Factory' );
-		$provider = $contentProviderFactory->getProvider( $out, true );
+		$provider = $contentProviderFactory->getProvider( $out, false );
 	}
 }
