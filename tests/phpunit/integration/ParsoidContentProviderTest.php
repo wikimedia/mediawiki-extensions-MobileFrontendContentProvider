@@ -117,7 +117,7 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 		$factoryMock = $this->createMock( HttpRequestFactory::class );
 		$factoryMock->expects( $this->once() )
 			->method( 'create' )
-			->with( self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=apioutput&useformat=mobile' )
+			->with( self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=minerva&useformat=mobile' )
 			->willReturn( $httpFalseRequestMock );
 
 		$title = $this->createTestTitle();
@@ -136,7 +136,7 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	public function testGetHtmlWithResponseDecodedNotArray() {
 		$title = $this->createTestTitle();
 
-		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=apioutput&useformat=mobile';
+		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=minerva&useformat=mobile';
 		$this->setService(
 			'HttpRequestFactory',
 			$this->mockHTTPFactory(
@@ -158,7 +158,7 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 		$sampleResponse = $this->wrapHTML( '<div class="mw-parser-output">value<h2>l</h2>t</div>' );
 		$title = $this->createTestTitle();
 
-		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=apioutput&useformat=mobile';
+		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=minerva&useformat=mobile';
 		$this->setService( 'HttpRequestFactory', $this->mockHTTPFactory( $url, $sampleResponse ) );
 		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
 		$actual = $ParsoidContentProvider->getHTML();

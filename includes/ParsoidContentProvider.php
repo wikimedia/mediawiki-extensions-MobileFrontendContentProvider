@@ -61,7 +61,7 @@ class ParsoidContentProvider implements IContentProvider {
 
 		$url = $this->baseUrl . '/wiki/';
 		$url .= urlencode( $title->getPrefixedDBkey() );
-		$url .= '?useparsoid=1&useskin=apioutput&useformat=mobile';
+		$url .= '?useparsoid=1&useskin=minerva&useformat=mobile';
 
 		$resp = $this->fileGetContents( $url );
 		if ( $resp ) {
