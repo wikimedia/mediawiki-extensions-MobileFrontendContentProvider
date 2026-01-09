@@ -33,6 +33,30 @@ class ParsoidContentProvider implements IContentProvider {
 	}
 
 	/**
+	 * Adds configuration variables and modules to the page.
+	 *
+	 * @param OutputPage $out
+	 */
+	private function addModulesAndConfigToPage( OutputPage $out ) {
+		$title = $out->getTitle();
+		$url = $this->baseUrl . 'w/api.php';
+		$url .= '?action=parse&format=json&prop=modules%7Cjsconfigvars&parser=parsoid';
+		$url .= '&useskin=minerva&formatversion=2&page=';
+		$url .= urlencode( $title->getPrefixedDBkey() );
+		$response = MediaWikiServices::getInstance()->getHttpRequestFactory()
+			->create( $url, [], __METHOD__ );
+
+		$status = $response->execute();
+		if ( !$status->isOK() ) {
+			return;
+		}
+
+		$resp = json_decode( $response->getContent(), true );
+		$out->addModules( $resp['parse'][ 'modules' ] ?? [] );
+		$out->addJsConfigVars( $resp['parse']['jsconfigvars'] ?? [] );
+	}
+
+	/**
 	 * @param string $url URL to fetch the content
 	 * @return string
 	 */
@@ -56,8 +80,9 @@ class ParsoidContentProvider implements IContentProvider {
 		if ( !$title ) {
 			return '';
 		}
+		$out = $this->out;
 		// Parsoid renders HTML incompatible with PHP parser and needs its own styles
-		$this->out->addModuleStyles( 'mediawiki.skinning.content.parsoid' );
+		$out->addModuleStyles( 'mediawiki.skinning.content.parsoid' );
 
 		$url = $this->baseUrl . '/wiki/';
 		$url .= urlencode( $title->getPrefixedDBkey() );
@@ -84,6 +109,8 @@ class ParsoidContentProvider implements IContentProvider {
 				$childNode->parentNode->removeChild( $childNode );
 			}
 		}
+
+		$this->addModulesAndConfigToPage( $out );
 		return $container ? XHtmlSerializer::serialize(
 			$container, [ 'innerXML' => true, 'smartQuote' => false ]
 		)['html'] : '';
