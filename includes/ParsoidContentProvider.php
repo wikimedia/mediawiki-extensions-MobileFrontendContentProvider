@@ -9,8 +9,8 @@ use MediaWiki\Registration\ExtensionRegistry;
 use MediaWiki\Title\Title;
 use MobileFrontend\ContentProviders\IContentProvider;
 use OutputPage;
-use Wikimedia\Parsoid\Utils\DOMCompat;
-use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Core\DOMCompat;
+use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Wt2Html\XHtmlSerializer;
 
 /**
