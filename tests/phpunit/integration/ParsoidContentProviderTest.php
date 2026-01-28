@@ -11,7 +11,7 @@ use MobileFrontendContentProviders\ParsoidContentProvider;
  */
 class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	private const BASE_URL = '';
-	private const PARSE_API_URL = 'w/api.php?action=parse&format=json&prop=modules%7Cjsconfigvars'
+	private const PARSE_API_URL = '/w/api.php?action=parse&format=json&prop=modules%7Cjsconfigvars%7Csections'
 		. '&parser=parsoid&useskin=minerva&formatversion=2&page=Test_Title';
 	private const PARSE_API_RESPONSE = '{ "parse": { "modules": [], "jsconfigvars": {} } }';
 
@@ -26,17 +26,19 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @param string $baseUrl
 	 * @param Title|null $title
+	 * @param bool $isMobile
 	 * @return ParsoidContentProvider
 	 */
-	private function makeParsoidContentProvider( $baseUrl, ?Title $title = null ) {
-		$out = new OutputPage( new RequestContext() );
+	private function makeParsoidContentProvider( $baseUrl, ?Title $title = null, $isMobile = true ) {
+		$skin = $this->createMock( Skin::class );
+		$skin->method( 'getSkinName' )
+			->willReturn( 'minerva' );
+		$out = $this->createMock( OutputPage::class );
+		$out->method( 'getSkin' )->willReturn( $skin );
 		if ( $title ) {
-			$out->setTitle( $title );
-		} else {
-			// make sure RequestContext doesn't pick up a title from the global
-			$this->setMwGlobals( 'wgTitle', null );
+			$out->method( 'getTitle' )->willReturn( $title );
 		}
-		return new ParsoidContentProvider( $baseUrl, $out );
+		return new ParsoidContentProvider( $baseUrl, $out, $isMobile );
 	}
 
 	private function createTestTitle() {
@@ -151,12 +153,13 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 		$title = $this->createTestTitle();
 
 		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=minerva&useformat=mobile';
+		$html = '<div class="mw-parser-output" data-mw-parsoid-version="1">text</div>';
 		$this->setService(
 			'HttpRequestFactory',
 			$this->mockHTTPFactory( [
 				[
 					$url,
-					$this->wrapHTML( '<div class="mw-parser-output">text</div>' )
+					$this->wrapHTML( $html )
 				],
 				[
 					self::PARSE_API_URL,
@@ -167,7 +170,7 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
 		$actual = $ParsoidContentProvider->getHTML();
 
-		$this->assertSame( '<div class="mw-parser-output">text</div>', $actual );
+		$this->assertSame( $html, $actual );
 	}
 
 	/**
@@ -175,7 +178,8 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::fileGetContents
 	 */
 	public function testGetHtmlWithValidResponse() {
-		$sampleResponse = $this->wrapHTML( '<div class="mw-parser-output">value<h2>l</h2>t</div>' );
+		$html = '<div class="mw-parser-output" data-mw-parsoid-version="1">value<h2>l</h2>t</div>';
+		$sampleResponse = $this->wrapHTML( $html );
 		$title = $this->createTestTitle();
 
 		$url = self::BASE_URL . '/wiki/Test_Title?useparsoid=1&useskin=minerva&useformat=mobile';
@@ -189,7 +193,6 @@ class ParsoidContentProviderTest extends MediaWikiIntegrationTestCase {
 		$ParsoidContentProvider = $this->makeParsoidContentProvider( self::BASE_URL, $title );
 		$actual = $ParsoidContentProvider->getHTML();
 
-		$expected = '<div class="mw-parser-output">value<h2>l</h2>t</div>';
-		$this->assertSame( $expected, $actual );
+		$this->assertSame( $html, $actual );
 	}
 }
