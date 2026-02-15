@@ -133,8 +133,11 @@ class ParsoidContentProvider implements IContentProvider {
 
 		foreach ( $container->childNodes as $childNode ) {
 			if (
-				get_class( $childNode ) !== 'Wikimedia\Parsoid\DOM\Text' &&
-				strpos( $childNode->getAttribute( 'class' ), 'mw-parser-output' ) === false
+				$childNode->nodeType !== XML_TEXT_NODE &&
+				!(
+					$childNode->nodeType === XML_ELEMENT_NODE &&
+					DOMCompat::getClassList( $childNode )->contains( 'mw-parser-output' )
+				)
 			) {
 				$childNode->parentNode->removeChild( $childNode );
 			}
